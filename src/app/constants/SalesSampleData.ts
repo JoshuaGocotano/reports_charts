@@ -5,12 +5,12 @@ const SalesSampleData = [
   { date: "01-09-2023", amount: 52000 },
   { date: "01-16-2023", amount: 51000 }, 
   { date: "01-23-2023", amount: 48000 }, 
-  { date: "01-30-2023", amount: 49500 }, // last week of january
-  { date: "02-01-2023", amount: 10500 }, // first day of feb
+  { date: "01-30-2023", amount: 49500 }, // last week of january 2023
+  { date: "02-01-2023", amount: 10500 }, // first day of feb 2023
   { date: "02-06-2023", amount: 51500 },
   { date: "02-13-2023", amount: 50000 },
   { date: "02-20-2023", amount: 50500 },
-  { date: "02-27-2023", amount: 53000 },
+  { date: "02-27-2023", amount: 54500 },
   { date: "03-06-2023", amount: 49000 },
   { date: "03-13-2023", amount: 51500 },
   { date: "03-20-2023", amount: 50000 },
@@ -43,7 +43,7 @@ const SalesSampleData = [
   { date: "09-25-2023", amount: 50000 },
   { date: "10-02-2023", amount: 53000 },
   { date: "10-09-2023", amount: 52000 },
-  { date: "10-16-2023", amount: 49000 },
+  { date: "10-16-2023", amount: 41000 },
   { date: "10-23-2023", amount: 50500 },
   { date: "10-30-2023", amount: 49500 },
   { date: "11-06-2023", amount: 51500 },
@@ -52,14 +52,14 @@ const SalesSampleData = [
   { date: "11-27-2023", amount: 48000 },
   { date: "12-04-2023", amount: 53000 },
   { date: "12-11-2023", amount: 49000 },
-  { date: "12-18-2023", amount: 50500 },
-  { date: "12-25-2023", amount: 50000 },
+  { date: "12-18-2023", amount: 48500 },
+  { date: "12-25-2023", amount: 51000 },
 
   // 2024
   { date: "01-01-2024", amount: 50000 }, 
-  { date: "01-08-2024", amount: 48000 },
+  { date: "01-08-2024", amount: 30000 },
   { date: "01-09-2024", amount: 12000 },
-  { date: "01-15-2024", amount: 53000 },
+  { date: "01-15-2024", amount: 54500 },
   { date: "01-22-2024", amount: 49000 },
   { date: "01-29-2024", amount: 51000 },
   { date: "02-05-2024", amount: 52500 },
@@ -99,8 +99,8 @@ const SalesSampleData = [
   { date: "09-30-2024", amount: 51000 },
   { date: "10-07-2024", amount: 49500 },
   { date: "10-14-2024", amount: 50000 },
-  { date: "10-21-2024", amount: 53000 },
-  { date: "10-28-2024", amount: 50000 },
+  { date: "10-21-2024", amount: 53000 }, // data for last week
+  { date: "10-28-2024", amount: 50000 }, // data for this week
   { date: "11-04-2024", amount: 52000 },
   { date: "11-11-2024", amount: 48000 },
   { date: "11-18-2024", amount: 49000 },
@@ -110,7 +110,10 @@ const SalesSampleData = [
   { date: "12-16-2024", amount: 49500 },
   { date: "12-23-2024", amount: 47000 },
   { date: "12-24-2024", amount: 11000 },
-];
+].map(data => ({
+  ...data,
+  profit: data.amount * 0.3, // Calculate 30% profit
+}));
 
 export default SalesSampleData;
 

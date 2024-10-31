@@ -33,53 +33,66 @@ const CustomAreaChart = () => {
   // Aggregate data into weeks
   const weeklyData = useMemo(() => {
     const weeks: { [key: number]: number } = {};
+    const profits: { [key: number]: number } = {};
 
     salesDataForYear.forEach((data) => {
       const week = getISOWeek(data.date);
       weeks[week] = (weeks[week] || 0) + data.amount;
+      profits[week] = (profits[week] || 0) + data.profit;
     });
 
-    return Object.values(weeks);
+    return {
+      sales: Object.values(weeks),
+      profits: Object.values(profits),
+    };
   }, [salesDataForYear]);
 
   // Aggregate data into months
   const monthlyData = useMemo(() => {
     const months = Array.from({ length: 12 }, () => 0);
+    const monthlyProfits = Array.from({ length: 12 }, () => 0);
 
     salesDataForYear.forEach((data) => {
       const monthIndex = new Date(data.date).getMonth();
       months[monthIndex] += data.amount;
+      monthlyProfits[monthIndex] += data.profit;
     });
 
-    return months;
+    return { sales: months, profits: monthlyProfits };
   }, [salesDataForYear]);
 
   // Aggregate data into quarters
   const quarterlyData = useMemo(() => {
     const quarters = Array.from({ length: 4 }, () => 0);
+    const quarterlyProfits = Array.from({ length: 4 }, () => 0);
 
-    monthlyData.forEach((amount, monthIndex) => {
+    monthlyData.sales.forEach((amount, monthIndex) => {
       const quarterIndex = Math.floor(monthIndex / 3);
       quarters[quarterIndex] += amount;
+      quarterlyProfits[quarterIndex] += monthlyData.profits[monthIndex];
     });
 
-    return quarters;
+    return { sales: quarters, profits: quarterlyProfits };
   }, [monthlyData]);
 
   const dataSeries = useMemo(() => {
-    if (timeFrame === "Weekly") {
-      return [{ name: "Total Sales", data: weeklyData }];
-    } else if (timeFrame === "Monthly") {
-      return [{ name: "Total Sales", data: monthlyData }];
-    } else {
-      return [{ name: "Total Sales", data: quarterlyData }];
-    }
+    const selectedData =
+      timeFrame === "Weekly"
+        ? weeklyData
+        : timeFrame === "Monthly"
+        ? monthlyData
+        : quarterlyData;
+
+    return [
+      { name: "Total Sales", data: selectedData.sales },
+      { name: "Profit", data: selectedData.profits },
+    ];
   }, [timeFrame, weeklyData, monthlyData, quarterlyData]);
 
   const chartOptions = {
     chart: { type: "area", toolbar: { show: false }, offsetY: 10 },
-    stroke: { curve: "straight" },
-    colors: ["#77CDFF"],
+    stroke: { curve: "straight", width: 2},
+    colors: ["#77CDFF", "#024CAA"],
     fill: {
       type: "gradient",
       gradient: {
@@ -92,7 +105,10 @@ const CustomAreaChart = () => {
     xaxis: {
       categories:
         timeFrame === "Weekly"
-          ? Array.from({ length: weeklyData.length }, (_, i) => `Week ${i + 1}`)
+          ? Array.from(
+              { length: weeklyData.sales.length },
+              (_, i) => `Week ${i + 1}`
+            )
           : timeFrame === "Monthly"
           ? Array.from({ length: 12 }, (_, i) => `Month ${i + 1}`)
           : ["Q1", "Q2", "Q3", "Q4"],
@@ -137,6 +153,7 @@ const CustomAreaChart = () => {
         </Dropdown>
       </div>
 
+      {/* TimeFrame Selection */}
       <div className="bg-blue-50 absolute top-4 right-4 p-2 rounded">
         {(["Weekly", "Monthly", "Quarterly"] as TimeFrame[]).map((frame) => (
           <button
